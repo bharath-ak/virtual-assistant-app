@@ -84,6 +84,8 @@ if audio_input:
                 site += '.com'  
             url = f"https://{site}"
             response = f"Here’s a link to open the site: {url}"
+        elif 'exit' in instruction or 'quit' in instruction or 'bye' in instruction:
+            talk("Goodbye! See you later.")
         else:
             response = f"{instruction}"
 
