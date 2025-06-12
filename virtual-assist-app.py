@@ -48,17 +48,10 @@ def search_wikipedia(instruction):
 
         if topic:
             summary = wikipedia.summary(topic, sentences=2)
-            # page = wikipedia.page(topic, auto_suggest=False)
-            api_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{topic.replace(' ', '_')}"
-            r = requests.get(api_url, headers={"User-Agent": "GrootVoiceAssistant/1.0"})
-            data = r.json()
-            image_url = data.get("thumbnail", {}).get("source")
-            full_url = page.url
+            page_url = page.url
             response = f"{summary}"
-            if image_url:
-                st.image(image_url, caption=topic.title())
-            if full_url:
-                st.code(f"[🔗 Read more on Wikipedia]({full_url})")
+            if page_url:
+                st.code(f"[🔗 Read more on Wikipedia]({page_url})")
         else:
             response = 'Please specify a topic to search on Wikipedia.'
 
