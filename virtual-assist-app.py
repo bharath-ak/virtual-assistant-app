@@ -16,7 +16,10 @@ st.title("🌱 Groot: Voice Assistant")
 r = sr.Recognizer()
 location = requests.get('https://ipinfo.io/json').json()
 tz_name = location.get('timezone')
-local_time = datetime.now(ZoneInfo(tz_name))
+if tz_name:
+    local_time = datetime.now(ZoneInfo(tz_name))
+else:
+    local_time = datetime.now('Asia/Kolkata')
 hour = local_time.hour
 minute = local_time.minute
 
