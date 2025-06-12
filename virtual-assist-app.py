@@ -78,6 +78,12 @@ if audio_input:
             song = instruction.replace('play', '').strip()
             link = f"https://www.youtube.com/results?search_query={'+'.join(song.split())}"
             response = f"Here’s a link to play {song} on YouTube: {link}"
+        elif 'open' in instruction:
+            site = instruction.replace('open','').strip()
+            if '.' not in site:
+                site += '.com'  
+            url = f"https://{site}"
+            response = f"Here’s a link to open the site: {url}"
         else:
             response = f"{instruction}"
 
