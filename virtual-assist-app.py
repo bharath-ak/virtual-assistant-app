@@ -35,6 +35,12 @@ def greet():
     else:
         return 'Hi'
 
+def get_valid_image(images):
+    for img in images:
+        if img.lower().endswith(('.jpg', '.jpeg', '.png')) and 'logo' not in img.lower() and 'icon' not in img.lower():
+            return img
+    return None
+
 def search_wikipedia(instruction):
     try:
         instruction = instruction.lower()
@@ -48,7 +54,7 @@ def search_wikipedia(instruction):
         if topic:
             summary = wikipedia.summary(topic, sentences=2)
             page = wikipedia.page(topic, auto_suggest=False)
-            image_url = page.images[0] if page.images else None
+            image_url = get_valid_image(page.images)
             full_url = page.url
             response = f"{summary}"
             if image_url:
