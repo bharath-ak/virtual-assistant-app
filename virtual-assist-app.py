@@ -14,8 +14,8 @@ st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 st.title("🌱 Groot: Voice Assistant")
 
 r = sr.Recognizer()
-location = requests.get("https://ipapi.co/json/").json()
-tz_name = location.get("timezone")
+location = requests.get('https://ipinfo.io/json').json()
+tz_name = location.get('timezone')
 local_time = datetime.now(ZoneInfo(tz_name))
 hour = local_time.hour
 minute = local_time.minute
