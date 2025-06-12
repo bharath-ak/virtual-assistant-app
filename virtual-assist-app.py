@@ -14,12 +14,14 @@ st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 st.title("🌱 Groot: Voice Assistant")
 
 r = sr.Recognizer()
-location = requests.get('https://ipinfo.io/json').json()
-tz_name = location.get('timezone')
-if tz_name:
-    local_time = datetime.now(ZoneInfo(tz_name))
-else:
-    local_time = datetime.now(ZoneInfo('Asia/Kolkata'))
+def get_local_time():
+    location = requests.get('https://ipinfo.io/json', timeout=5).json()
+    tz_name = location.get('timezone')
+    if tz_name:
+        return datetime.now(ZoneInfo(tz_name))
+    else:
+        return datetime.now(ZoneInfo('Asia/Kolkata'))
+local_time = get_local_time()
 hour = local_time.hour
 minute = local_time.minute
 
