@@ -47,7 +47,13 @@ def search_wikipedia(instruction):
 
         if topic:
             summary = wikipedia.summary(topic, sentences=2)
+            page = wikipedia.page(topic, auto_suggest=False)
+            image_url = page.images[0] if page.images else None
+            full_url = page.url
             response = f"{summary}"
+            if image_url:
+                st.image(image_url, caption=topic.title())
+            st.markdown(f"[🔗 Read more on Wikipedia]({full_url})")
         else:
             response = 'Please specify a topic to search on Wikipedia.'
 
