@@ -12,12 +12,13 @@ import re
 st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 
 st.title("🌱 Groot: Voice Assistant")
-st.write("something I want to see in my app")
+
 r = sr.Recognizer()
 API_KEY = st.secrets["ipdata"]["api_key"]
 url = f"https://api.ipdata.co?api-key={API_KEY}"
 location = requests.get(url).json()
 tz_name = location.get('time_zone', {}).get('name')
+st.write(tz_name)
 local_time = datetime.now(ZoneInfo(tz_name))
 hour = local_time.hour
 minute = local_time.minute
