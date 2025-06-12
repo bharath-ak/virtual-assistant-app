@@ -36,12 +36,6 @@ def greet():
     else:
         return 'Hi'
 
-def get_valid_image(images):
-    for img in images:
-        if img.lower().endswith(('.jpg', '.jpeg', '.png')) and 'logo' not in img.lower() and 'icon' not in img.lower():
-            return img
-    return None
-
 def search_wikipedia(instruction):
     try:
         instruction = instruction.lower()
@@ -63,7 +57,8 @@ def search_wikipedia(instruction):
             response = f"{summary}"
             if image_url:
                 st.image(image_url, caption=topic.title())
-            st.markdown(f"[🔗 Read more on Wikipedia]({full_url})")
+            if full_url:
+                st.code(f"[🔗 Read more on Wikipedia]({full_url})")
         else:
             response = 'Please specify a topic to search on Wikipedia.'
 
