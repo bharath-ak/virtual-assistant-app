@@ -3,3 +3,4 @@ SpeechRecognition
 gTTS
 wikipedia
 geocoder
+timezonefinder
