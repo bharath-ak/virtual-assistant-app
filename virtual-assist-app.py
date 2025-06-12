@@ -50,9 +50,9 @@ def search_wikipedia(instruction):
             summary = wikipedia.summary(topic, sentences=2)
             # page = wikipedia.page(topic, auto_suggest=False)
             api_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{topic.replace(' ', '_')}"
-            res = requests.get(api_url).json()
-            image_url = res.get("thumbnail", {}).get("source", "")
-            # image_url = get_valid_image(page.images)
+            r = requests.get(api_url, headers={"User-Agent": "GrootVoiceAssistant/1.0"})
+            data = r.json()
+            image_url = data.get("thumbnail", {}).get("source")
             full_url = page.url
             response = f"{summary}"
             if image_url:
