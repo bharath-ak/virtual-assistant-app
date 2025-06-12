@@ -3,9 +3,9 @@ import speech_recognition as sr
 from gtts import gTTS
 import io
 import wikipedia
-import requests
 import smtplib
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import re
 
 st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
@@ -13,8 +13,9 @@ st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 st.title("🌱 Groot: Voice Assistant")
 
 r = sr.Recognizer()
-hour = datetime.now().hour
-minute = datetime.now().minute
+local_time = datetime.now(ZoneInfo("Asia/Kolkata"))
+hour = local_time.now().hour
+minute = local_time.now().minute
 
 if 'history' not in st.session_state:
     st.session_state.history = []
@@ -50,20 +51,18 @@ def search_wikipedia(instruction):
             page = wikipedia.page(topic, auto_suggest=False)
             summary = wikipedia.summary(topic, sentences=2)
             page_url = page.url
-            response = f"{summary}"
-            if page_url:
-                st.link_button("🔗 Read more on Wikipedia", url=page_url)
+            return summary, page_url
         else:
-            response = 'Please specify a topic to search on Wikipedia.'
+            return 'Please specify a topic to search on Wikipedia.', None
 
     except wikipedia.exceptions.DisambiguationError as e:
-        response = 'There are multiple results for that. Please be more specific.'
+        return 'There are multiple results for that. Please be more specific.', None
 
     except wikipedia.exceptions.PageError:
-        response = "Sorry, I couldn't find any results on Wikipedia."
+        return "Sorry, I couldn't find any results on Wikipedia.", None
 
     except Exception as e:
-        response = 'Something went wrong while searching Wikipedia.'
+        return 'Something went wrong while searching Wikipedia.', None
         print('Error:', e)
 
     return response
@@ -97,7 +96,7 @@ if audio_input:
 
         if 'groot' in instruction or 'greet' in instruction or 'wake up' in instruction:
             response = greet() + ', How may I help you?'
-        elif 'how are you' in instruction:
+        elif 'how are you' in instruction or "how's it going" in instruction or "what's up" in instruction:
             response = "I'm Groot! I'm doing great."
         elif 'your name' in instruction:
             response = 'I am Groot, your virtual assistant.'
@@ -123,7 +122,9 @@ if audio_input:
             # webbrowser.open(url)
             response = f"Here’s a link to open the site: {url}"
         elif 'tell me about' in instruction or 'who is' in instruction or 'what is' in instruction:
-            response = search_wikipedia(instruction)           
+            response, wiki_url = search_wikipedia(instruction)
+            if wiki_url:
+                st.link_button("🔗 Read more on Wikipedia", url=wiki_url)            
         elif 'send whatsapp message' in instruction:
             match = re.search(r"send whatsapp message to (\d+) as ([a-zA-Z\s]*)", instruction)
             phone_no = match.group(1)
