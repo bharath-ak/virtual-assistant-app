@@ -5,6 +5,8 @@ import io
 import wikipedia
 import smtplib
 import requests
+import geocoder
+from timezonefinder import TimezoneFinder
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import re
@@ -14,12 +16,11 @@ st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 st.title("🌱 Groot: Voice Assistant")
 
 r = sr.Recognizer()
-#location = requests.get('https://ipinfo.io/json').json()
-#tz_name = location.get('timezone')
-#if tz_name:
-   # local_time = datetime.now(ZoneInfo(tz_name))
-#else:
-local_time = datetime.now(ZoneInfo('Asia/Kolkata'))
+geo = geocoder.ip('me')
+lat, lng = geo.latlng
+tf = TimezoneFinder()
+tz_name = tf.timezone_at(lat=lat, lng=lng)
+local_time = datetime.now(ZoneInfo(tz_name))
 hour = local_time.hour
 minute = local_time.minute
 
