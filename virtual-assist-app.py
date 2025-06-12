@@ -13,10 +13,6 @@ st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 
 st.title("🌱 Groot: Voice Assistant")
 
-local_now = datetime.now().astimezone()
-local_time = time.localtime()
-st.write(local_time.tm_zone)
-
 r = sr.Recognizer()
 local_time = datetime.now(ZoneInfo('Asia/Kolkata'))
 hour = local_time.hour
