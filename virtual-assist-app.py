@@ -6,6 +6,7 @@ import wikipedia
 import smtplib
 import requests
 from datetime import datetime
+from timezonefinder import TimezoneFinder
 from zoneinfo import ZoneInfo
 import re
 
@@ -17,7 +18,10 @@ r = sr.Recognizer()
 API_KEY = st.secrets["ipdata"]["api_key"]
 url = f"https://api.ipdata.co?api-key={API_KEY}"
 location = requests.get(url).json()
-tz_name = location.get('time_zone', {}).get('name')
+latitude = location.get("latitude")
+longitude = location.get("longitude")
+tf = TimezoneFinder()
+tz_name = tf.timezone_at(lat=latitude, lng=longitude)
 st.write(tz_name)
 local_time = datetime.now(ZoneInfo(tz_name))
 hour = local_time.hour
