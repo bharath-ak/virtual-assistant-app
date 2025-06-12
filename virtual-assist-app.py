@@ -65,6 +65,15 @@ if audio_input:
             response = "I'm Groot! I'm doing great."
         elif 'your name' in instruction:
             response = 'I am Groot, your virtual assistant.'
+        elif 'what is the time' in instruction or 'time now' in instruction:
+            current_time = datetime.now().strftime('%I:%M %p')
+            response = 'The time is ' + current_time
+        elif 'what is the date' in instruction or "today's date" in instruction:
+            current_date = datetime.now().strftime('%B %d, %Y')
+            response = "Today's date is " + current_date
+        elif 'what day is it' in instruction or 'what day' in instruction or 'day today' in instruction:
+            current_day = datetime.now().strftime('%A')
+            response = 'Today is ' + current_day
         else:
             response = f"{instruction}"
 
