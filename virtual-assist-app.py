@@ -16,7 +16,8 @@ st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 st.title("🌱 Groot: Voice Assistant")
 
 local_now = datetime.now().astimezone()
-st.write(local_now.tzname())
+st.write(time.timezone)
+st.write(time.tzname)
 
 r = sr.Recognizer()
 API_KEY = st.secrets["ipdata"]["api_key"]
