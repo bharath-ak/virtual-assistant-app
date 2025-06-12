@@ -8,11 +8,15 @@ import requests
 from datetime import datetime
 from timezonefinder import TimezoneFinder
 from zoneinfo import ZoneInfo
+import time
 import re
 
 st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 
 st.title("🌱 Groot: Voice Assistant")
+
+local_now = datetime.now().astimezone()
+st.write(local_now.tzname())
 
 r = sr.Recognizer()
 API_KEY = st.secrets["ipdata"]["api_key"]
@@ -22,7 +26,7 @@ latitude = location.get("latitude")
 longitude = location.get("longitude")
 tf = TimezoneFinder()
 tz_name = tf.timezone_at(lat=latitude, lng=longitude)
-st.write(tz_name)
+
 local_time = datetime.now(ZoneInfo(tz_name))
 hour = local_time.hour
 minute = local_time.minute
