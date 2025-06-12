@@ -5,6 +5,7 @@ import io
 import wikipedia
 import smtplib
 from datetime import datetime
+from timezonefinder import TimezoneFinder
 import pytz
 import geocoder
 import re
