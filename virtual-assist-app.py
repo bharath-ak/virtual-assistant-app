@@ -5,7 +5,7 @@ import io
 import wikipedia
 import smtplib
 from datetime import datetime
-from zoneinfo import ZoneInfo
+import pytz
 import geocoder
 import re
 
@@ -18,7 +18,8 @@ geo = geocoder.ip('me')
 lat, lng = geo.latlng
 tf = TimezoneFinder()
 tz_name = tf.timezone_at(lat=lat, lng=lng)
-local_time = datetime.now(ZoneInfo(tz_name))
+tz = pytz.timezone(tz_name)
+local_time = datetime.now(tz)
 hour = local_time.hour
 minute = local_time.minute
 
