@@ -2,12 +2,26 @@ import streamlit as st
 import speech_recognition as sr
 from gtts import gTTS
 import io
+from datetime import datetime
 
 st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 
 st.title("🌱 Groot: Voice Assistant")
 
 r = sr.Recognizer()
+hour = datetime.now().hour
+minute = datetime.now().minute
+
+def greet():
+    if 5 < hour < 12:
+        return 'Good Morning'
+    elif 12 <= hour < 17:
+        return 'Good Afternoon'
+    elif 17 <= hour <= 22:
+        return 'Good Evening'
+    else:
+        return 'Hi'
+
 if 'history' not in st.session_state:
     st.session_state.history = []
 
@@ -45,16 +59,14 @@ if audio_input:
     if instruction:
         st.session_state.history.append(f"👤 You: {instruction}")
 
-        # Simple response logic (you can customize)
-        if "how are you" in instruction:
+        if 'groot' in instruction or 'greet' in instruction or 'wake up' in instruction:
+            response = greet() + ', How may I help you?'
+        elif 'how are you' in instruction:
             response = "I'm Groot! I'm doing great."
-        elif "your name" in instruction:
-            response = "I am Groot, your virtual assistant."
-        elif "time" in instruction:
-            from datetime import datetime
-            response = f"The current time is {datetime.now().strftime('%I:%M %p')}."
+        elif 'your name' in instruction:
+            response = 'I am Groot, your virtual assistant.'
         else:
-            response = f"You said: {instruction}"
+            response = f"{instruction}"
 
         st.session_state.history.append(f"🌱 Groot: {response}")
         audio_output = talk(response)
