@@ -6,9 +6,7 @@ import wikipedia
 import smtplib
 import requests
 from datetime import datetime
-from timezonefinder import TimezoneFinder
 from zoneinfo import ZoneInfo
-import time
 import re
 
 st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
@@ -20,15 +18,7 @@ local_time = time.localtime()
 st.write(local_time.tm_zone)
 
 r = sr.Recognizer()
-API_KEY = st.secrets["ipdata"]["api_key"]
-url = f"https://api.ipdata.co?api-key={API_KEY}"
-location = requests.get(url).json()
-latitude = location.get("latitude")
-longitude = location.get("longitude")
-tf = TimezoneFinder()
-tz_name = tf.timezone_at(lat=latitude, lng=longitude)
-
-local_time = datetime.now(ZoneInfo(tz_name))
+local_time = datetime.now(ZoneInfo('Asia/Kolkata'))
 hour = local_time.hour
 minute = local_time.minute
 
