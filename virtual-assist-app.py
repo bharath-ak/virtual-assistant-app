@@ -30,16 +30,6 @@ def talk(text):
     tts_io.seek(0)
     return tts_io
 
-def get_city():
-    try:
-        g = geocoder.ip('me')
-        if g.ok and g.city:
-            return g.city
-        else:
-            return "Unknown City"
-    except:
-        return "Unknown City"
-
 def greet():
     if 5 < hour < 12:
         return 'Good Morning'
