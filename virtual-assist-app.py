@@ -66,13 +66,12 @@ if audio_input:
         elif 'your name' in instruction:
             response = 'I am Groot, your virtual assistant.'
         else:
-            response = f"You said: {instruction}"
-    
-            st.session_state.history.append(f"🌱 Groot: {response}")
-            audio_output = talk(response)
-            st.audio(audio_output, format="audio/mp3")
+            response = f"{instruction}"
 
-# Chat history
+        st.session_state.history.append(f"🌱 Groot: {response}")
+        audio_output = talk(response)
+        st.audio(audio_output, format="audio/mp3")
+
 with st.expander("🗒️ Conversation History", expanded=True):
     for line in st.session_state.history:
         st.markdown(line)
