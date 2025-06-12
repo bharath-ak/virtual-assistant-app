@@ -2,7 +2,9 @@ import streamlit as st
 import speech_recognition as sr
 from gtts import gTTS
 import io
+import smtplib
 from datetime import datetime
+import re
 
 st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 
@@ -84,8 +86,16 @@ if audio_input:
                 site += '.com'  
             url = f"https://{site}"
             response = f"Here’s a link to open the site: {url}"
+        elif 'send whatsapp message' in instruction:
+            match = re.search(r"send whatsapp message to (\d+) as ([a-zA-Z\s]*)", instruction)
+            phone_no = match.group(1)
+            msg = match.group(2)
+            # pywhatkit.sendwhatmsg(phone_no, msg, hour, minute)    
+            response = f"Message sent to {phone_no} at {hour} and {minute}."
+        elif 'send email' in instruction:
+            send_email()
         elif 'exit' in instruction or 'quit' in instruction or 'bye' in instruction:
-            talk("Goodbye! See you later.")
+            response = "Goodbye! See you later."
         else:
             response = f"{instruction}"
 
