@@ -1,25 +1,22 @@
 import streamlit as st
 import speech_recognition as sr
+from gtts import gTTS
 import io
 
-st.title("🎙️ Streamlit Voice Assistant")
+st.title("🎙️ Voice Assistant (Cloud Friendly)")
 
-# Use correct audio input method
+# Get audio from mic
 try:
-    audio_input = st.audio_input("Tap to record your voice...")
+    audio_input = st.audio_input("🎧 Record your voice")
 except AttributeError:
-    audio_input = st.experimental_audio_input("Tap to record your voice...")
+    audio_input = st.experimental_audio_input("🎧 Record your voice")
 
 if audio_input:
-    # Ensure the file pointer is reset
+    st.audio(audio_input, format="audio/wav")
     audio_io = io.BytesIO(audio_input.getvalue())
     audio_io.seek(0)
 
-    # Playback
-    st.audio(audio_io, format="audio/wav")
-    st.success(f"Received {len(audio_io.getvalue())} bytes")
-
-    # Recognize speech
+    # Speech Recognition
     r = sr.Recognizer()
     with sr.AudioFile(audio_io) as source:
         audio_data = r.record(source)
@@ -27,8 +24,18 @@ if audio_input:
     try:
         text = r.recognize_google(audio_data)
         st.success("🗣️ Recognized Text:")
-        st.markdown(f"**{text}**")
+        st.write(f"**{text}**")
+
+        # Convert text to speech using gTTS
+        tts = gTTS(text)
+        tts_io = io.BytesIO()
+        tts.write_to_fp(tts_io)
+        tts_io.seek(0)
+
+        st.success("🔊 Speaking...")
+        st.audio(tts_io, format="audio/mp3")
+
     except sr.UnknownValueError:
-        st.error("Sorry, I couldn't understand the audio.")
+        st.error("Sorry, I couldn't understand that.")
     except sr.RequestError as e:
-        st.error(f"Could not request results from Google Speech Recognition service: {e}")
+        st.error(f"Google Speech API error: {e}")
