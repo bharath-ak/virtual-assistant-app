@@ -3,40 +3,68 @@ import speech_recognition as sr
 from gtts import gTTS
 import io
 
-st.title("🎙️ Voice Assistant (Cloud Friendly)")
+st.set_page_config(page_title="Groot Voice Assistant", page_icon="🗣️")
 
-# Get audio from mic
+st.title("🧠 Groot: Continuous Voice Assistant")
+
+# Setup
+r = sr.Recognizer()
+if 'history' not in st.session_state:
+    st.session_state.history = []
+
+def read_instruction(audio_input):
+    instruction = ''
+    if audio_input:
+        audio_io = io.BytesIO(audio_input.getvalue())
+        audio_io.seek(0)
+        with sr.AudioFile(audio_io) as source:
+            audio_data = r.record(source)
+        try:
+            instruction = r.recognize_google(audio_data).lower()
+            return instruction
+        except Exception as e:
+            st.error("❌ Error recognizing speech.")
+            print('Speech recognition error:', e)
+    return ''
+
+def talk(text):
+    tts = gTTS(text)
+    tts_io = io.BytesIO()
+    tts.write_to_fp(tts_io)
+    tts_io.seek(0)
+    return tts_io
+
+# UI
+st.markdown("### 🎤 Speak below to interact")
+
 try:
-    audio_input = st.audio_input("🎧 Record your voice")
+    audio_input = st.audio_input("🎧 Tap to record")
 except AttributeError:
-    audio_input = st.experimental_audio_input("🎧 Record your voice")
+    audio_input = st.experimental_audio_input("🎧 Tap to record")
 
 if audio_input:
     st.audio(audio_input, format="audio/wav")
-    audio_io = io.BytesIO(audio_input.getvalue())
-    audio_io.seek(0)
+    instruction = read_instruction(audio_input)
 
-    # Speech Recognition
-    r = sr.Recognizer()
-    with sr.AudioFile(audio_io) as source:
-        audio_data = r.record(source)
+    if instruction:
+        st.session_state.history.append(f"👤 You: {instruction}")
 
-    try:
-        text = r.recognize_google(audio_data)
-        with st.container():
-            st.markdown("### 🗣️ Recognized Text:")
-            st.code(text)
+        # Simple response logic (you can customize)
+        if "how are you" in instruction:
+            response = "I'm Groot! I'm doing great."
+        elif "your name" in instruction:
+            response = "I am Groot, your virtual assistant."
+        elif "time" in instruction:
+            from datetime import datetime
+            response = f"The current time is {datetime.now().strftime('%I:%M %p')}."
+        else:
+            response = f"You said: {instruction}"
 
-        # Convert text to speech using gTTS
-        tts = gTTS(text)
-        tts_io = io.BytesIO()
-        tts.write_to_fp(tts_io)
-        tts_io.seek(0)
+        st.session_state.history.append(f"🧠 Groot: {response}")
+        audio_output = talk(response)
+        st.audio(audio_output, format="audio/mp3")
 
-        st.success("🔊 Speaking...")
-        st.audio(tts_io, format="audio/mp3")
-
-    except sr.UnknownValueError:
-        st.error("Sorry, I couldn't understand that.")
-    except sr.RequestError as e:
-        st.error(f"Google Speech API error: {e}")
+# Chat history
+with st.expander("🗒️ Conversation History", expanded=True):
+    for line in st.session_state.history:
+        st.markdown(line)
