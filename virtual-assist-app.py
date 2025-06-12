@@ -3,11 +3,10 @@ import speech_recognition as sr
 from gtts import gTTS
 import io
 
-st.set_page_config(page_title="Groot Voice Assistant", page_icon="🗣️")
+st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 
-st.title("🧠 Groot: Continuous Voice Assistant")
+st.title("🌱 Groot: Voice Assistant")
 
-# Setup
 r = sr.Recognizer()
 if 'history' not in st.session_state:
     st.session_state.history = []
@@ -34,9 +33,6 @@ def talk(text):
     tts_io.seek(0)
     return tts_io
 
-# UI
-st.markdown("### 🎤 Speak below to interact")
-
 try:
     audio_input = st.audio_input("🎧 Tap to record")
 except AttributeError:
@@ -60,7 +56,7 @@ if audio_input:
         else:
             response = f"You said: {instruction}"
 
-        st.session_state.history.append(f"🧠 Groot: {response}")
+        st.session_state.history.append(f"🌱 Groot: {response}")
         audio_output = talk(response)
         st.audio(audio_output, format="audio/mp3")
 
