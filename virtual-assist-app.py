@@ -58,7 +58,7 @@ def search_wikipedia(instruction):
             api_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{topic.replace(' ', '_')}"
             res = requests.get(api_url).json()
             image_url = res.get("thumbnail", {}).get("source", "")
-            image_url = get_valid_image(page.images)
+            # image_url = get_valid_image(page.images)
             full_url = page.url
             response = f"{summary}"
             if image_url:
