@@ -19,7 +19,7 @@ r = sr.Recognizer()
 #if tz_name:
    # local_time = datetime.now(ZoneInfo(tz_name))
 #else:
-local_time = datetime.now('Asia/Kolkata')
+local_time = datetime.now(ZoneInfo('Asia/Kolkata'))
 hour = local_time.hour
 minute = local_time.minute
 
