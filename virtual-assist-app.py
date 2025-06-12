@@ -23,8 +23,9 @@ if audio_input:
 
     try:
         text = r.recognize_google(audio_data)
-        st.success("🗣️ Recognized Text:")
-        st.write(f"**{text}**")
+        with st.container():
+            st.success("🗣️ Recognized Text:")
+            st.write(f"**{text}**")
 
         # Convert text to speech using gTTS
         tts = gTTS(text)
