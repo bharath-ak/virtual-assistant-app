@@ -6,6 +6,7 @@ import wikipedia
 import smtplib
 from datetime import datetime
 from zoneinfo import ZoneInfo
+import geocoder
 import re
 
 st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
@@ -13,7 +14,11 @@ st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 st.title("🌱 Groot: Voice Assistant")
 
 r = sr.Recognizer()
-local_time = datetime.now(ZoneInfo("Asia/Kolkata"))
+geo = geocoder.ip('me')
+lat, lng = geo.latlng
+tf = TimezoneFinder()
+tz_name = tf.timezone_at(lat=lat, lng=lng)
+local_time = datetime.now(ZoneInfo(tz_name))
 hour = local_time.hour
 minute = local_time.minute
 
@@ -26,6 +31,16 @@ def talk(text):
     tts.write_to_fp(tts_io)
     tts_io.seek(0)
     return tts_io
+
+def get_city():
+    try:
+        g = geocoder.ip('me')
+        if g.ok and g.city:
+            return g.city
+        else:
+            return "Unknown City"
+    except:
+        return "Unknown City"
 
 def greet():
     if 5 < hour < 12:
@@ -101,13 +116,13 @@ if audio_input:
         elif 'your name' in instruction:
             response = 'I am Groot, your virtual assistant.'
         elif 'what is the time' in instruction or 'time now' in instruction:
-            current_time = datetime.now().strftime('%I:%M %p')
+            current_time = local_time.strftime('%I:%M %p')
             response = 'The time is ' + current_time
         elif 'what is the date' in instruction or "today's date" in instruction:
-            current_date = datetime.now().strftime('%B %d, %Y')
+            current_date = local_time.strftime('%B %d, %Y')
             response = "Today's date is " + current_date
         elif 'what day is it' in instruction or 'what day' in instruction or 'day today' in instruction:
-            current_day = datetime.now().strftime('%A')
+            current_day = local_time.strftime('%A')
             response = 'Today is ' + current_day
         elif 'play' in instruction:
             song = instruction.replace('play', '').strip()
