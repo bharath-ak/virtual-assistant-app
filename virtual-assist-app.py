@@ -52,7 +52,7 @@ def search_wikipedia(instruction):
             page_url = page.url
             response = f"{summary}"
             if page_url:
-                st.code(f"[🔗 Read more on Wikipedia]({page_url})")
+                st.link_button("🔗 Read more on Wikipedia", url=page_url)
         else:
             response = 'Please specify a topic to search on Wikipedia.'
 
