@@ -2,6 +2,7 @@ import streamlit as st
 import speech_recognition as sr
 from gtts import gTTS
 import io
+import wikipedia
 import smtplib
 from datetime import datetime
 import re
@@ -14,6 +15,16 @@ r = sr.Recognizer()
 hour = datetime.now().hour
 minute = datetime.now().minute
 
+if 'history' not in st.session_state:
+    st.session_state.history = []
+
+def talk(text):
+    tts = gTTS(text)
+    tts_io = io.BytesIO()
+    tts.write_to_fp(tts_io)
+    tts_io.seek(0)
+    return tts_io
+
 def greet():
     if 5 < hour < 12:
         return 'Good Morning'
@@ -24,8 +35,33 @@ def greet():
     else:
         return 'Hi'
 
-if 'history' not in st.session_state:
-    st.session_state.history = []
+def search_wikipedia(instruction):
+    try:
+        instruction = instruction.lower()
+        topic = ''
+
+        for phrase in ['tell me about', 'who is', 'what is']:
+            if phrase in instruction:
+                topic = instruction.replace(phrase, '').strip()
+                break
+
+        if topic:
+            summary = wikipedia.summary(topic, sentences=2)
+            response = f"{summary}"
+        else:
+            response = 'Please specify a topic to search on Wikipedia.'
+
+    except wikipedia.exceptions.DisambiguationError as e:
+        response = 'There are multiple results for that. Please be more specific.'
+
+    except wikipedia.exceptions.PageError:
+        response = "Sorry, I couldn't find any results on Wikipedia."
+
+    except Exception as e:
+        response = 'Something went wrong while searching Wikipedia.'
+        print('Error:', e)
+
+    return response
 
 def read_instruction(audio_input):
     instruction = ''
@@ -41,13 +77,6 @@ def read_instruction(audio_input):
             st.error("❌ Error recognizing speech.")
             print('Speech recognition error:', e)
     return ''
-
-def talk(text):
-    tts = gTTS(text)
-    tts_io = io.BytesIO()
-    tts.write_to_fp(tts_io)
-    tts_io.seek(0)
-    return tts_io
 
 try:
     audio_input = st.audio_input("🎧 Tap to record")
@@ -79,13 +108,17 @@ if audio_input:
         elif 'play' in instruction:
             song = instruction.replace('play', '').strip()
             link = f"https://www.youtube.com/results?search_query={'+'.join(song.split())}"
+            # pywhatkit.playonyt(song)
             response = f"Here’s a link to play {song} on YouTube: {link}"
         elif 'open' in instruction:
             site = instruction.replace('open','').strip()
             if '.' not in site:
-                site += '.com'  
+                site += '.com'
             url = f"https://{site}"
+            # webbrowser.open(url)
             response = f"Here’s a link to open the site: {url}"
+        elif 'tell me about' in instruction or 'who is' in instruction or 'what is' in instruction:
+            response = search_wikipedia(instruction)           
         elif 'send whatsapp message' in instruction:
             match = re.search(r"send whatsapp message to (\d+) as ([a-zA-Z\s]*)", instruction)
             phone_no = match.group(1)
