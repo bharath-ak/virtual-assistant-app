@@ -47,6 +47,7 @@ def search_wikipedia(instruction):
                 break
 
         if topic:
+            page = wikipedia.page(topic, auto_suggest=False)
             summary = wikipedia.summary(topic, sentences=2)
             page_url = page.url
             response = f"{summary}"
