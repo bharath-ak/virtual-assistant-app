@@ -74,6 +74,10 @@ if audio_input:
         elif 'what day is it' in instruction or 'what day' in instruction or 'day today' in instruction:
             current_day = datetime.now().strftime('%A')
             response = 'Today is ' + current_day
+        elif 'play' in instruction:
+            song = instruction.replace('play', '').strip()
+            link = f"https://www.youtube.com/results?search_query={'+'.join(song.split())}"
+            response = f"Here’s a link to play {song} on YouTube: {link}"
         else:
             response = f"{instruction}"
 
