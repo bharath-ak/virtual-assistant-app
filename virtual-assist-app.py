@@ -4,10 +4,9 @@ from gtts import gTTS
 import io
 import wikipedia
 import smtplib
+import requests
 from datetime import datetime
-from timezonefinder import TimezoneFinder
-import pytz
-import geocoder
+from zoneinfo import ZoneInfo
 import re
 
 st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
@@ -15,12 +14,9 @@ st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 st.title("🌱 Groot: Voice Assistant")
 
 r = sr.Recognizer()
-geo = geocoder.ip('me')
-lat, lng = geo.latlng
-tf = TimezoneFinder()
-tz_name = tf.timezone_at(lat=lat, lng=lng)
-tz = pytz.timezone(tz_name)
-local_time = datetime.now(tz)
+location = requests.get("https://ipapi.co/json/").json()
+tz_name = location.get("timezone")
+local_time = datetime.now(ZoneInfo(tz_name))
 hour = local_time.hour
 minute = local_time.minute
 
