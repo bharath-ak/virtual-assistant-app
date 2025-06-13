@@ -85,13 +85,13 @@ def set_reminder(instruction):
         elif 'hour' in unit:
             seconds *= 3600
 
-        def reminder_task():
+        # def reminder_task():
             # reminder_text = f"🔔 Reminder: {task}"
-            st.session_state.history.append(f"🌱 Groot: {reminder_text}")
-            audio_output = talk(reminder_text)
-            st.audio(audio_output, format="audio/mp3")
+            # st.session_state.history.append(f"🌱 Groot: {reminder_text}")
+            # audio_output = talk(reminder_text)
+            # st.audio(audio_output, format="audio/mp3")
 
-        threading.Timer(seconds, reminder_task).start()
+        # threading.Timer(seconds, reminder_task).start()
 
         return f"✅ Reminder set to '{task}' in {delay_time} {unit}."
     except Exception as e:
