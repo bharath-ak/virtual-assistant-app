@@ -7,6 +7,7 @@ import smtplib
 import requests
 from datetime import datetime
 from zoneinfo import ZoneInfo
+import threading
 import re
 
 st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
@@ -68,19 +69,44 @@ def search_wikipedia(instruction):
 
     return response
 
+def set_reminder(instruction):
+    try:
+        match = re.search(r"remind me to (.+) in (\d+)\s*(seconds?|minutes?|hours?)", instruction.lower())
+        if not match:
+            return "I didn't understand the reminder format. Please say something like 'remind me to take medicine in 10 minutes'."
+
+        task = match.group(1).strip()
+        delay_time = int(match.group(2))
+        unit = match.group(3).lower()
+
+        seconds = delay_time
+        if 'minute' in unit:
+            seconds *= 60
+        elif 'hour' in unit:
+            seconds *= 3600
+
+        def reminder_task():
+            # reminder_text = f"🔔 Reminder: {task}"
+            st.session_state.history.append(f"🌱 Groot: {reminder_text}")
+            audio_output = talk(reminder_text)
+            st.audio(audio_output, format="audio/mp3")
+
+        threading.Timer(seconds, reminder_task).start()
+
+        return f"✅ Reminder set to '{task}' in {delay_time} {unit}."
+    except Exception as e:
+        print("Reminder error:", e)
+        return "❌ Failed to set reminder. Please try again."
+
 def read_instruction(audio_input):
-    instruction = ''
-    if audio_input:
-        audio_io = io.BytesIO(audio_input.getvalue())
-        audio_io.seek(0)
-        with sr.AudioFile(audio_io) as source:
+    try:
+        with sr.AudioFile(io.BytesIO(audio_input.getvalue())) as source:
             audio_data = r.record(source)
-        try:
             instruction = r.recognize_google(audio_data).lower()
             return instruction
-        except Exception as e:
-            st.error("❌ Error recognizing speech.")
-            print('Speech recognition error:', e)
+    except Exception as e:
+        st.error("❌ Error recognizing speech.")
+        print('Speech recognition error:', e)
     return ''
 
 try:
@@ -125,7 +151,9 @@ if audio_input:
         elif 'tell me about' in instruction or 'who is' in instruction or 'what is' in instruction:
             response, wiki_url = search_wikipedia(instruction)
             if wiki_url:
-                st.link_button("🔗 Read more on Wikipedia", url=wiki_url)            
+                st.link_button("🔗 Read more on Wikipedia", url=wiki_url)    
+        elif 'remind me' in instruction or 'set reminder' in instruction:
+            response = set_reminder(instruction)
         elif 'send whatsapp message' in instruction:
             match = re.search(r"send whatsapp message to (\d+) as ([a-zA-Z\s]*)", instruction)
             phone_no = match.group(1)
