@@ -23,19 +23,10 @@ minute = now.minute
 
 if 'history' not in st.session_state:
     st.session_state.history = []
-if 'last_instruction' not in st.session_state:
-    st.session_state.last_instruction = ''
 if 'reminder_set' not in st.session_state:
     st.session_state.reminder_set = False
 if 'reminder_triggered' not in st.session_state:
     st.session_state.reminder_triggered = False
-if 'reminder_time' not in st.session_state:
-    st.session_state.reminder_time = 0
-if 'reminder_task' not in st.session_state:
-    st.session_state.reminder_task = ''
-
-# if st.session_state.reminder_set and not st.session_state.reminder_triggered:
-
 
 def talk(text):
     tts = gTTS(text)
@@ -44,7 +35,7 @@ def talk(text):
     tts_io.seek(0)
     return tts_io
 
-def greet(hour):
+def greet():
     if 5 < hour < 12:
         return 'Good Morning'
     elif 12 <= hour < 17:
@@ -143,7 +134,7 @@ if audio_input:
         st.session_state.history.append(f"👤 You: {instruction}")
         
         if 'groot' in instruction or 'greet' in instruction or 'wake up' in instruction:
-            response = greet(hour) + ', How may I help you?'
+            response = greet() + ', How may I help you?'
         elif 'how are you' in instruction or "how's it going" in instruction or "what's up" in instruction:
             response = "I'm Groot! I'm doing great."
         elif 'your name' in instruction:
@@ -200,7 +191,7 @@ if st.session_state.get("reminder_set"):
         reminder_text = f"🔔 Reminder: {st.session_state.reminder_task}"
         st.session_state.history.append(f"🌱 Groot: {reminder_text}")
         st.success(reminder_text)
-        # st.audio(talk(reminder_text), format="audio/mp3")
+        st.audio(talk(reminder_text), format="audio/mp3")
         st.session_state.reminder_set = False
         st.session_state.reminder_triggered = True
 
