@@ -187,8 +187,8 @@ if audio_input:
 if st.session_state.get("reminder_set"):
     remaining = int(st.session_state.reminder_time - time.time())
     total_duration = int(st.session_state.reminder_time - (st.session_state.reminder_time - remaining)) 
-    if total_duration == 0:
-        total_duration = 1
+    # if total_duration == 0:
+    #     total_duration = 1
     progress = 1 - (remaining / total_duration)
     progress = max(0.0, min(progress, 1.0))
     st.progress(progress)
