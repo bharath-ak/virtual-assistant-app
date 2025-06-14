@@ -8,7 +8,10 @@ import requests
 from datetime import datetime
 import time
 from zoneinfo import ZoneInfo
+from streamlit_autorefresh import st_autorefresh
 import re
+
+st_autorefresh(interval=1000, limit=None, key="refresh")
 
 st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 
