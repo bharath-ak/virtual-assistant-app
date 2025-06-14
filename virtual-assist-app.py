@@ -15,7 +15,8 @@ st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 
 st.title("🌱 Groot: Voice Assistant")
 
-st_autorefresh(interval=1000, limit=None, key="refresh")
+if st.session_state.get("reminder_set"):
+    st_autorefresh(interval=1000, limit=None, key="refresh")
 
 r = sr.Recognizer()
 local_time = datetime.now(ZoneInfo('Asia/Kolkata'))
