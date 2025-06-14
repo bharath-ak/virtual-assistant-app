@@ -21,6 +21,8 @@ now = datetime.now(ZoneInfo('Asia/Kolkata'))
 hour = now.hour
 minute = now.minute
 
+if 'last_instruction' not in st.session_state:
+    st.session_state.last_instruction = ''
 if 'history' not in st.session_state:
     st.session_state.history = []
 if 'reminder_set' not in st.session_state:
@@ -129,9 +131,8 @@ if audio_input:
     st.audio(audio_input, format="audio/wav")
     instruction = read_instruction(audio_input)
 
-    if instruction: 
-        # and instruction != st.session_state.last_instruction:
-        # st.session_state.last_instruction = instruction
+    if instruction and instruction != st.session_state.last_instruction:
+        st.session_state.last_instruction = instruction
         st.session_state.history.append(f"👤 You: {instruction}")
         
         if 'groot' in instruction or 'greet' in instruction or 'wake up' in instruction:
