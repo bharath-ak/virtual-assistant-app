@@ -35,7 +35,7 @@ if 'reminder_task' not in st.session_state:
     st.session_state.reminder_task = ''
 
 # if st.session_state.reminder_set and not st.session_state.reminder_triggered:
-st_autorefresh(interval=1000, limit=None)
+
 
 def talk(text):
     tts = gTTS(text)
@@ -195,6 +195,7 @@ if st.session_state.get("reminder_set"):
     remaining = int(st.session_state.reminder_time - time.time())
     if remaining > 0:
         st.info(f"⏳ Reminder in: {remaining} second(s)")
+        st_autorefresh(interval=1000, limit=None)
     elif not st.session_state.reminder_triggered:
         reminder_text = f"🔔 Reminder: {st.session_state.reminder_task}"
         st.session_state.history.append(f"🌱 Groot: {reminder_text}")
