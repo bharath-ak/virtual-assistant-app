@@ -17,6 +17,10 @@ st.title("🌱 Groot: Voice Assistant")
 
 r = sr.Recognizer()
 
+now = datetime.now(ZoneInfo('Asia/Kolkata'))
+hour = now.hour
+minute = now.minute
+
 if 'history' not in st.session_state:
     st.session_state.history = []
 if 'last_instruction' not in st.session_state:
