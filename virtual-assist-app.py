@@ -104,7 +104,11 @@ def set_reminder(instruction):
         st.session_state.reminder_triggered = False
         st.session_state.reminder_task = task
         st.session_state.reminder_time = time.time() + seconds
-        
+
+        st.write("DEBUG: Reminder set successfully.")
+        st.write("DEBUG: Task =", task)
+        st.write("DEBUG: Delay in seconds =", seconds)
+        st.write("DEBUG: Reminder time =", st.session_state.reminder_time)
         # def reminder_task():
             # reminder_text = f"🔔 Reminder: {task}"
             # st.session_state.history.append(f"🌱 Groot: {reminder_text}")
@@ -136,6 +140,9 @@ except AttributeError:
 
 if st.session_state.get("reminder_set"):
     remaining = int(st.session_state.reminder_time - time.time())
+    st.write("DEBUG: Current time =", time.time())
+    st.write("DEBUG: Reminder time =", st.session_state.reminder_time)
+    st.write("DEBUG: Time remaining =", remaining)
     if remaining > 0:
         st.info(f"⏳ Reminder in: {remaining} second(s)")
     elif not st.session_state.reminder_triggered:
