@@ -6,8 +6,8 @@ import wikipedia
 import smtplib
 import requests
 from datetime import datetime
+import time
 from zoneinfo import ZoneInfo
-import threading
 import re
 
 st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
@@ -84,14 +84,18 @@ def set_reminder(instruction):
             seconds *= 60
         elif 'hour' in unit:
             seconds *= 3600
+            
+        st.session_state.reminder_set = True
+        st.session_state.reminder_task = task
+        st.session_state.reminder_time = time.time() + seconds
+        
+        # def reminder_task():
+            # reminder_text = f"🔔 Reminder: {task}"
+            # st.session_state.history.append(f"🌱 Groot: {reminder_text}")
+            # audio_output = talk(reminder_text)
+            # st.audio(audio_output, format="audio/mp3")
 
-        def reminder_task():
-            reminder_text = f"🔔 Reminder: {task}"
-            st.session_state.history.append(f"🌱 Groot: {reminder_text}")
-            audio_output = talk(reminder_text)
-            st.audio(audio_output, format="audio/mp3")
-
-        threading.Timer(seconds, reminder_task).start()
+        # threading.Timer(seconds, reminder_task).start()
 
         return f"✅ Reminder set to '{task}' in {delay_time} {unit}."
     except Exception as e:
@@ -170,6 +174,18 @@ if audio_input:
         st.session_state.history.append(f"🌱 Groot: {response}")
         audio_output = talk(response)
         st.audio(audio_output, format="audio/mp3")
+
+        if st.session_state.get("reminder_set"):
+            remaining = int(st.session_state.reminder_time - time.time())
+            if remaining > 0:
+                st.info(f"⏳ Time left for reminder: {remaining} seconds")
+            else:
+                reminder_text = f"🔔 Reminder: {st.session_state.reminder_task}"
+                st.session_state.history.append(f"🌱 Groot: {reminder_text}")
+                st.success(reminder_text)
+                audio_output = talk(reminder_text)
+                st.audio(audio_output, format="audio/mp3")
+                st.session_state.reminder_set = False 
 
 with st.expander("🗒️ Conversation History", expanded=True):
     for line in st.session_state.history:
