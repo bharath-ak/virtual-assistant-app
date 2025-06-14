@@ -16,9 +16,6 @@ st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 st.title("🌱 Groot: Voice Assistant")
 
 r = sr.Recognizer()
-local_time = datetime.now(ZoneInfo('Asia/Kolkata'))
-hour = local_time.hour
-minute = local_time.minute
 
 if 'history' not in st.session_state:
     st.session_state.history = []
@@ -28,9 +25,13 @@ if 'reminder_set' not in st.session_state:
     st.session_state.reminder_set = False
 if 'reminder_triggered' not in st.session_state:
     st.session_state.reminder_triggered = False
+if 'reminder_time' not in st.session_state:
+    st.session_state.reminder_time = 0
+if 'reminder_task' not in st.session_state:
+    st.session_state.reminder_task = ''
 
 if st.session_state.reminder_set and not st.session_state.reminder_triggered:
-    st_autorefresh(interval=1000, limit=None, key="refresh")
+    st_autorefresh(interval=1000, limit=None)
 
 def talk(text):
     tts = gTTS(text)
@@ -132,12 +133,12 @@ except AttributeError:
 if st.session_state.get("reminder_set"):
     remaining = int(st.session_state.reminder_time - time.time())
     if remaining > 0:
-        st.info(f"⏳ Time left for reminder: {remaining} seconds")
+        st.info(f"⏳ Reminder in: {remaining} second(s)")
     elif not st.session_state.reminder_triggered:
         reminder_text = f"🔔 Reminder: {st.session_state.reminder_task}"
         st.session_state.history.append(f"🌱 Groot: {reminder_text}")
         st.success(reminder_text)
-        st.audio(talk(reminder_text), format="audio/mp3")
+        # st.audio(talk(reminder_text), format="audio/mp3")
         st.session_state.reminder_set = False
         st.session_state.reminder_triggered = True 
 
@@ -148,9 +149,6 @@ if audio_input:
     if instruction and instruction != st.session_state.last_instruction:
         st.session_state.last_instruction = instruction
         st.session_state.history.append(f"👤 You: {instruction}")
-
-        now = datetime.now(ZoneInfo('Asia/Kolkata'))
-        hour, minute = now.hour, now.minute
         
         if 'groot' in instruction or 'greet' in instruction or 'wake up' in instruction:
             response = greet(hour) + ', How may I help you?'
