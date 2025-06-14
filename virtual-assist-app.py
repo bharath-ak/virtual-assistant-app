@@ -34,8 +34,8 @@ if 'reminder_time' not in st.session_state:
 if 'reminder_task' not in st.session_state:
     st.session_state.reminder_task = ''
 
-if st.session_state.reminder_set and not st.session_state.reminder_triggered:
-    st_autorefresh(interval=1000, limit=None)
+# if st.session_state.reminder_set and not st.session_state.reminder_triggered:
+st_autorefresh(interval=1000, limit=None)
 
 def talk(text):
     tts = gTTS(text)
@@ -133,24 +133,7 @@ try:
     audio_input = st.audio_input("🎧 Tap to record")
 except AttributeError:
     audio_input = st.experimental_audio_input("🎧 Tap to record")
-
-st.write("🔁 Checking reminder status...")
-st.write("🔍 reminder_set:", st.session_state.get("reminder_set"))
-if st.session_state.get("reminder_set"):
-    remaining = int(st.session_state.reminder_time - time.time())
-    st.write("DEBUG: Current time =", time.time())
-    st.write("DEBUG: Reminder time =", st.session_state.reminder_time)
-    st.write("DEBUG: Time remaining =", remaining)
-    if remaining > 0:
-        st.info(f"⏳ Reminder in: {remaining} second(s)")
-    elif not st.session_state.reminder_triggered:
-        reminder_text = f"🔔 Reminder: {st.session_state.reminder_task}"
-        st.session_state.history.append(f"🌱 Groot: {reminder_text}")
-        st.success(reminder_text)
-        # st.audio(talk(reminder_text), format="audio/mp3")
-        st.session_state.reminder_set = False
-        st.session_state.reminder_triggered = True 
-
+ 
 if audio_input:
     st.audio(audio_input, format="audio/wav")
     instruction = read_instruction(audio_input)
@@ -207,6 +190,18 @@ if audio_input:
 
         st.session_state.history.append(f"🌱 Groot: {response}")
         st.audio(talk(response), format="audio/mp3")
+
+if st.session_state.get("reminder_set"):
+    remaining = int(st.session_state.reminder_time - time.time())
+    if remaining > 0:
+        st.info(f"⏳ Reminder in: {remaining} second(s)")
+    elif not st.session_state.reminder_triggered:
+        reminder_text = f"🔔 Reminder: {st.session_state.reminder_task}"
+        st.session_state.history.append(f"🌱 Groot: {reminder_text}")
+        st.success(reminder_text)
+        # st.audio(talk(reminder_text), format="audio/mp3")
+        st.session_state.reminder_set = False
+        st.session_state.reminder_triggered = True
 
 with st.expander("🗒️ Conversation History", expanded=True):
     for line in st.session_state.history:
