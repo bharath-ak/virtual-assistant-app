@@ -15,9 +15,6 @@ st.set_page_config(page_title="Groot: Voice Assistant", page_icon="🌱")
 
 st.title("🌱 Groot: Voice Assistant")
 
-if st.session_state.get("reminder_set"):
-    st_autorefresh(interval=1000, limit=None, key="refresh")
-
 r = sr.Recognizer()
 local_time = datetime.now(ZoneInfo('Asia/Kolkata'))
 hour = local_time.hour
@@ -31,6 +28,9 @@ if 'reminder_set' not in st.session_state:
     st.session_state.reminder_set = False
 if 'reminder_triggered' not in st.session_state:
     st.session_state.reminder_triggered = False
+
+if st.session_state.reminder_set and not st.session_state.reminder_triggered:
+    st_autorefresh(interval=1000, limit=None, key="refresh")
 
 def talk(text):
     tts = gTTS(text)
