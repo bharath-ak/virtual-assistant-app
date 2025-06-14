@@ -154,14 +154,14 @@ if audio_input:
             song = instruction.replace('play', '').strip()
             link = f"https://www.youtube.com/results?search_query={'+'.join(song.split())}"
             # pywhatkit.playonyt(song)
-            response = f"Here’s a link to play {song} on YouTube: {link}"
+            response = f"▶️ Playing '{song}' — check it out on YouTube: {link}"
         elif 'open' in instruction:
             site = instruction.replace('open','').strip()
             if '.' not in site:
                 site += '.com'
             url = f"https://{site}"
             # webbrowser.open(url)
-            response = f"Here’s a link to open the site: {url}"
+            response = f"🌐 Opening: {url}"
         elif 'tell me about' in instruction or 'who is' in instruction or 'what is' in instruction:
             response, wiki_url = search_wikipedia(instruction)
             if wiki_url:
@@ -186,6 +186,12 @@ if audio_input:
 
 if st.session_state.get("reminder_set"):
     remaining = int(st.session_state.reminder_time - time.time())
+    total_duration = int(st.session_state.reminder_time - (st.session_state.reminder_time - remaining)) 
+    if total_duration == 0:
+        total_duration = 1
+    progress = 1 - (remaining / total_duration)
+    progress = max(0.0, min(progress, 1.0))
+    st.progress(progress)
     if remaining > 0:
         st.info(f"⏳ Reminder in: {remaining} second(s)")
         st_autorefresh(interval=1000, limit=None)
