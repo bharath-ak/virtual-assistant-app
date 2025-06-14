@@ -24,6 +24,12 @@ minute = local_time.minute
 
 if 'history' not in st.session_state:
     st.session_state.history = []
+if 'last_instruction' not in st.session_state:
+    st.session_state.last_instruction = ''
+if 'reminder_set' not in st.session_state:
+    st.session_state.reminder_set = False
+if 'reminder_triggered' not in st.session_state:
+    st.session_state.reminder_triggered = False
 
 def talk(text):
     tts = gTTS(text)
@@ -32,7 +38,7 @@ def talk(text):
     tts_io.seek(0)
     return tts_io
 
-def greet():
+def greet(hour):
     if 5 < hour < 12:
         return 'Good Morning'
     elif 12 <= hour < 17:
@@ -89,6 +95,7 @@ def set_reminder(instruction):
             seconds *= 3600
             
         st.session_state.reminder_set = True
+        st.session_state.reminder_triggered = False
         st.session_state.reminder_task = task
         st.session_state.reminder_time = time.time() + seconds
         
@@ -125,23 +132,27 @@ if audio_input:
     st.audio(audio_input, format="audio/wav")
     instruction = read_instruction(audio_input)
 
-    if instruction:
+    if instruction and instruction != st.session_state.last_instruction:
+        st.session_state.last_instruction = instruction
         st.session_state.history.append(f"👤 You: {instruction}")
 
+        now = datetime.now(ZoneInfo('Asia/Kolkata'))
+        hour, minute = now.hour, now.minute
+        
         if 'groot' in instruction or 'greet' in instruction or 'wake up' in instruction:
-            response = greet() + ', How may I help you?'
+            response = greet(hour) + ', How may I help you?'
         elif 'how are you' in instruction or "how's it going" in instruction or "what's up" in instruction:
             response = "I'm Groot! I'm doing great."
         elif 'your name' in instruction:
             response = 'I am Groot, your virtual assistant.'
         elif 'what is the time' in instruction or 'time now' in instruction:
-            current_time = local_time.strftime('%I:%M %p')
+            current_time = now.strftime('%I:%M %p')
             response = 'The time is ' + current_time
         elif 'what is the date' in instruction or "today's date" in instruction:
-            current_date = local_time.strftime('%B %d, %Y')
+            current_date = now.strftime('%B %d, %Y')
             response = "Today's date is " + current_date
         elif 'what day is it' in instruction or 'what day' in instruction or 'day today' in instruction:
-            current_day = local_time.strftime('%A')
+            current_day = now.strftime('%A')
             response = 'Today is ' + current_day
         elif 'play' in instruction:
             song = instruction.replace('play', '').strip()
@@ -175,20 +186,19 @@ if audio_input:
             response = f"{instruction}"
 
         st.session_state.history.append(f"🌱 Groot: {response}")
-        audio_output = talk(response)
-        st.audio(audio_output, format="audio/mp3")
+        st.audio(talk(response), format="audio/mp3")
 
-        if st.session_state.get("reminder_set"):
-            remaining = int(st.session_state.reminder_time - time.time())
-            if remaining > 0:
-                st.info(f"⏳ Time left for reminder: {remaining} seconds")
-            else:
-                reminder_text = f"🔔 Reminder: {st.session_state.reminder_task}"
-                st.session_state.history.append(f"🌱 Groot: {reminder_text}")
-                st.success(reminder_text)
-                audio_output = talk(reminder_text)
-                st.audio(audio_output, format="audio/mp3")
-                st.session_state.reminder_set = False 
+if st.session_state.get("reminder_set"):
+    remaining = int(st.session_state.reminder_time - time.time())
+    if remaining > 0:
+        st.info(f"⏳ Time left for reminder: {remaining} seconds")
+    elif not st.session_state.reminder_triggered:
+        reminder_text = f"🔔 Reminder: {st.session_state.reminder_task}"
+        st.session_state.history.append(f"🌱 Groot: {reminder_text}")
+        st.success(reminder_text)
+        st.audio(talk(reminder_text), format="audio/mp3")
+        st.session_state.reminder_set = False
+        st.session_state.reminder_triggered = True 
 
 with st.expander("🗒️ Conversation History", expanded=True):
     for line in st.session_state.history:
