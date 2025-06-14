@@ -129,6 +129,18 @@ try:
 except AttributeError:
     audio_input = st.experimental_audio_input("🎧 Tap to record")
 
+if st.session_state.get("reminder_set"):
+    remaining = int(st.session_state.reminder_time - time.time())
+    if remaining > 0:
+        st.info(f"⏳ Time left for reminder: {remaining} seconds")
+    elif not st.session_state.reminder_triggered:
+        reminder_text = f"🔔 Reminder: {st.session_state.reminder_task}"
+        st.session_state.history.append(f"🌱 Groot: {reminder_text}")
+        st.success(reminder_text)
+        st.audio(talk(reminder_text), format="audio/mp3")
+        st.session_state.reminder_set = False
+        st.session_state.reminder_triggered = True 
+
 if audio_input:
     st.audio(audio_input, format="audio/wav")
     instruction = read_instruction(audio_input)
@@ -188,18 +200,6 @@ if audio_input:
 
         st.session_state.history.append(f"🌱 Groot: {response}")
         st.audio(talk(response), format="audio/mp3")
-
-if st.session_state.get("reminder_set"):
-    remaining = int(st.session_state.reminder_time - time.time())
-    if remaining > 0:
-        st.info(f"⏳ Time left for reminder: {remaining} seconds")
-    elif not st.session_state.reminder_triggered:
-        reminder_text = f"🔔 Reminder: {st.session_state.reminder_task}"
-        st.session_state.history.append(f"🌱 Groot: {reminder_text}")
-        st.success(reminder_text)
-        st.audio(talk(reminder_text), format="audio/mp3")
-        st.session_state.reminder_set = False
-        st.session_state.reminder_triggered = True 
 
 with st.expander("🗒️ Conversation History", expanded=True):
     for line in st.session_state.history:
