@@ -249,7 +249,7 @@ if audio_input:
             response = send_whatsapp_message(instruction)
         elif 'send email to' in instruction:
             response = send_email(instruction)
-        elif 'do we have god' in instruction:
+        elif 'do we have god' in instruction.lower().strip("?!."):
             response = 'God is someone who created us. Bharath created me so god exist'           
         elif 'exit' in instruction or 'quit' in instruction or 'bye' in instruction:
             response = 'Goodbye! See you later.'
