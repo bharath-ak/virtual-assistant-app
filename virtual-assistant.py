@@ -53,6 +53,7 @@ def get_weather(instruction):
         units = 'metric'
         city_match = re.search(r'weather in ([a-zA-Z\s]+)', instruction)
         city = city_match.group(1).strip() if city_match else 'Chennai'
+        st.write(city)
         params = {
             'q': city,
             'appid': api_key,
@@ -68,7 +69,7 @@ def get_weather(instruction):
         temp = data['main']['temp']
         feels_like = data['main']['feels_like']
         humidity = data['main']['humidity']
-        st.write(city)
+
         st.write(weather)
         st.write(temp)
         st.write(feels_like)
