@@ -53,7 +53,7 @@ def get_weather(instruction):
         units = 'metric'
         city_match = re.search(r'weather in ([a-zA-Z\s]+)', instruction)
         city = city_match.group(1).strip() if city_match else 'Chennai'
-        st.write(city)
+        st.write("City detected:", city)
         params = {
             'q': city,
             'appid': api_key,
@@ -62,6 +62,9 @@ def get_weather(instruction):
         response = requests.get(url, params=params)
         data = response.json()
 
+        st.write("Status Code:", response.status_code)
+        st.write("API Response:", data)
+        
         if data['cod'] != 200:
             return "❌ Couldn't fetch weather info. Please try again."
 
