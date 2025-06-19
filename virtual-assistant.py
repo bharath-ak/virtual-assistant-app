@@ -83,6 +83,7 @@ def get_weather(instruction):
                 f"🌡️ Temperature: {temp}°C (Feels like {feels_like}°C)\n"
                 f"💧 Humidity: {humidity}%")
     except Exception as e:
+        st.error(f'❌ Error: {e}')
         print('Weather API error:', e)
         return '❌ Error getting weather info.'
 
