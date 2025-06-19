@@ -53,7 +53,6 @@ def get_weather(instruction):
         units = 'metric'
         city_match = re.search(r'weather in ([a-zA-Z\s]+)', instruction)
         city = city_match.group(1).strip() if city_match else 'Chennai'
-        st.write("City detected:", city)
         params = {
             'q': city,
             'appid': api_key,
@@ -61,9 +60,6 @@ def get_weather(instruction):
         }
         response = requests.get(url, params=params)
         data = response.json()
-
-        st.write("Status Code:", response.status_code)
-        st.write("API Response:", data)
         
         if data['cod'] != 200:
             return "❌ Couldn't fetch weather info. Please try again."
@@ -72,18 +68,12 @@ def get_weather(instruction):
         temp = data['main']['temp']
         feels_like = data['main']['feels_like']
         humidity = data['main']['humidity']
-
-        st.write(weather)
-        st.write(temp)
-        st.write(feels_like)
-        st.write(humidity)
         
         return (f"🌤️ Weather in {city}:\n"
                 f"📝 Condition: {weather}\n"
                 f"🌡️ Temperature: {temp}°C (Feels like {feels_like}°C)\n"
                 f"💧 Humidity: {humidity}%")
     except Exception as e:
-        st.error(f'❌ Error: {e}')
         print('Weather API error:', e)
         return '❌ Error getting weather info.'
 
