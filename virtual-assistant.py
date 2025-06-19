@@ -48,11 +48,17 @@ def greet():
 
 def get_weather(instruction):
     try:
+        url = 'https://api.openweathermap.org/data/2.5/weather'
         api_key = st.secrets['weather']['api_key']
+        units = 'metric'
         city_match = re.search(r'weather in ([a-zA-Z\s]+)', instruction)
         city = city_match.group(1).strip() if city_match else 'Chennai'
-        url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
-        response = requests.get(url)
+        params = {
+            'q': city,
+            'appid': api_key,
+            'units': units
+        }
+        response = requests.get(url, params=params)
         data = response.json()
 
         if data['cod'] != 200:
