@@ -68,7 +68,12 @@ def get_weather(instruction):
         temp = data['main']['temp']
         feels_like = data['main']['feels_like']
         humidity = data['main']['humidity']
-
+        st.write(city)
+        st.write(weather)
+        st.write(temp)
+        st.write(feels_like)
+        st.write(humidity)
+        
         return (f"🌤️ Weather in {city}:\n"
                 f"📝 Condition: {weather}\n"
                 f"🌡️ Temperature: {temp}°C (Feels like {feels_like}°C)\n"
