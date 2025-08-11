@@ -2,6 +2,7 @@
 
 **Groot** is a **voice-controlled personal assistant** built using **Streamlit**, allowing you to interact naturally via your **microphone**. Ask it about the weather, get Wikipedia summaries, schedule WhatsApp messages, send emails, and more — all through simple voice commands!
 
+[**Try the live app here!**](https://virtual-assistant-app.streamlit.app/)
 ---
 
 ## 🧠 Features
